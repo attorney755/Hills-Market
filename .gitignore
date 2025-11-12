@@ -47,3 +47,20 @@ uploads/
 # Test files (optional - include if you want to keep them)
 # tests/
 # test_*.py
+# Add to your existing .gitignore:
+# Test files
+test_*.py
+tests/
+add_sample_products.py
+simple_test.py
+test_api.py
+test_complete_api.py
+test_database.py
+test_db_connection.py
+test_frontend.py
+my_data.sql
+*/test-*.js
+
+# Database
+*.sqlite
+*.db
