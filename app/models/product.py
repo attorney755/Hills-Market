@@ -64,20 +64,25 @@ class Product(db.Model):
                         print(f"⚠️ Found malformed URL, skipping: {url}")
                         continue
                     
-                    # Handle relative URLs
-                    if url.startswith('/uploads/'):
-                        # Use configuration for base URL instead of hardcoding
-                        base_url = current_app.config.get('BASE_URL', 'http://127.0.0.1:5000')
-                        processed_urls.append(f"{base_url}{url}")
-                    elif url.startswith('uploads/'):
-                        base_url = current_app.config.get('BASE_URL', 'http://127.0.0.1:5000')
-                        processed_urls.append(f"{base_url}/{url}")
-                    elif url.startswith(('http://', 'https://')):
-                        # Only keep valid external URLs
-                        processed_urls.append(url)
-                    else:
-                        # Skip invalid URLs
-                        print(f"⚠️ Skipping invalid URL format: {url}")
+                     # Handle relative URLs
+if url.startswith('/uploads/'):
+    # Use configuration for base URL instead of hardcoding
+    base_url = current_app.config.get('BASE_URL', 'http://127.0.0.1:5000')
+    # Ensure proper URL formatting for production
+    if base_url.endswith('/'):
+        base_url = base_url[:-1]
+    processed_urls.append(f"{base_url}{url}")
+elif url.startswith('uploads/'):
+    base_url = current_app.config.get('BASE_URL', 'http://127.0.0.1:5000')
+    if base_url.endswith('/'):
+        base_url = base_url[:-1]
+    processed_urls.append(f"{base_url}/{url}")
+elif url.startswith(('http://', 'https://')):
+    # Only keep valid external URLs
+    processed_urls.append(url)
+else:
+    # Skip invalid URLs
+    print(f"⚠️ Skipping invalid URL format: {url}")
             
             # Get seller and category
             seller = User.query.get(self.user_id)
