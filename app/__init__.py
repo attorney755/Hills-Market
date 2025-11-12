@@ -101,10 +101,13 @@ def create_app(config_name='default'):
     def health_check():
         return jsonify({'status': 'healthy', 'service': 'Marketplace API'})
     
-    # Uploads route
-    @app.route('/uploads/<path:filename>')
-    def serve_uploads(filename):
-        uploads_dir = os.path.join(os.getcwd(), 'uploads')
+   # Uploads route - PRODUCTION READY
+@app.route('/uploads/<path:filename>')
+def serve_uploads(filename):
+    """Serve uploaded files - PRODUCTION READY"""
+    try:
+        # Use absolute path for production
+        uploads_dir = os.path.join(current_app.root_path, 'uploads')
         os.makedirs(uploads_dir, exist_ok=True)
         os.makedirs(os.path.join(uploads_dir, 'products'), exist_ok=True)
         
@@ -112,5 +115,6 @@ def create_app(config_name='default'):
         if os.path.exists(file_path):
             return send_from_directory(os.path.dirname(file_path), os.path.basename(file_path))
         return "File not found", 404
-    
-    return app
+    except Exception as e:
+        print(f"❌ Error serving upload: {str(e)}")
+        return "Error serving file", 500
