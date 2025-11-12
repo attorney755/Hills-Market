@@ -228,7 +228,7 @@ def create_product(current_user):
 @products_bp.route('/upload-image', methods=['POST'])
 @token_required
 def upload_product_image(current_user):
-    """Upload product image"""
+    """Upload product image - PRODUCTION READY"""
     try:
         if 'image' not in request.files:
             return jsonify({'message': 'No image file provided'}), 400
@@ -238,8 +238,8 @@ def upload_product_image(current_user):
             return jsonify({'message': 'No image selected'}), 400
         
         if file and allowed_file(file.filename):
-            # Create upload directory if it doesn't exist
-            upload_folder = 'uploads/products'
+            # Use absolute path for production
+            upload_folder = os.path.join(current_app.root_path, 'uploads', 'products')
             os.makedirs(upload_folder, exist_ok=True)
             
             # Generate unique filename
@@ -253,8 +253,8 @@ def upload_product_image(current_user):
             # Return the URL path for accessing the image
             image_url = f"/uploads/products/{unique_filename}"
             
-            print(f"✅ Image uploaded successfully: {image_url}")  # Debug log
-            print(f"📁 File saved at: {file_path}")  # Debug log
+            print(f"✅ Image uploaded successfully: {image_url}")
+            print(f"📁 File saved at: {file_path}")
             
             return jsonify({
                 'message': 'Image uploaded successfully',
@@ -359,7 +359,7 @@ def delete_product(current_user, product_id):
 
 # Improve the delete_product_images function
 def delete_product_images(image_urls):
-    """Delete physical image files from uploads folder"""
+    """Delete physical image files from uploads folder - PRODUCTION READY"""
     try:
         deleted_files = []
         for image_url in image_urls:
@@ -370,13 +370,13 @@ def delete_product_images(image_urls):
                 if image_url.startswith('/uploads/products/'):
                     filename = image_url.split('/')[-1]
                 elif image_url.startswith('http') and '/uploads/products/' in image_url:
-                    filename = image_url.split('/uploads/products/')[-1].split('?')[0]  # Remove query params
+                    filename = image_url.split('/uploads/products/')[-1].split('?')[0]
                 else:
-                    # Handle case where it might just be a filename
                     filename = image_url
                 
                 if filename:
-                    file_path = os.path.join('uploads', 'products', filename)
+                    # Use absolute path for production
+                    file_path = os.path.join(current_app.root_path, 'uploads', 'products', filename)
                     
                     # Delete the file if it exists
                     if os.path.exists(file_path):
