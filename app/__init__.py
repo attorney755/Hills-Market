@@ -15,7 +15,9 @@ mail = Mail()
 
 def create_app(config_name='default'):
     """Application factory"""
-    app = Flask(__name__)
+    app = Flask(__name__,
+                static_folder='../frontend',  # ADD THIS
+                template_folder='../frontend')  # ADD THIS
 
     print(f"🚀 Loading configuration: {config_name}")
 
